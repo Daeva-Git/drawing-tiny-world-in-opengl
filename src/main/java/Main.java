@@ -104,27 +104,30 @@ public class Main {
     }
 
     private void update (float deltaTime) {
+        shader.use();
+
+        // camera
         if (MouseListener.isDragging()) {
+            // TODO: 12/7/2022 something not working with dragging view
             camera.mouseDragged(deltaTime, MouseListener.getDeltaX(), -MouseListener.getDeltaY());
         }
-
         camera.mouseScrolled(deltaTime, MouseListener.getScrollY());
         camera.input(window.getID(), deltaTime);
-
-        // update camera
         camera.update(window.getWidth(), window.getHeight());
 
-        MouseListener.endFrame();
-
-        // set the clear color
-        glClearColor(0.2f, .5f, .8f, 0.5f);
-        // clear the framebuffer
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+        // shaders
         shader.setMatrix("model", camera.getModel());
         shader.setMatrix("view", camera.getView());
         shader.setMatrix("projection", camera.getProjection());
-        shader.use();
+
+        // set the clear color
+        glClearColor(28 / 255f, 30 / 255f, 38 / 255f, 1f);
+        // clear the framebuffer
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        MouseListener.endFrame();
+
+        shader.dispose();
     }
 
     private void draw (float deltaTime) {
@@ -133,7 +136,6 @@ public class Main {
 
     private void dispose() {
         glDeleteBuffers(VBO);
-        shader.dispose();
 
         // Free the window callbacks and destroy the window
         glfwFreeCallbacks(window.getID());

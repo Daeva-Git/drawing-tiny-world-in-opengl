@@ -13,7 +13,6 @@ public class Camera {
     private Vector3f front = new Vector3f(0.0f, 0.0f, -1.0f);
     private Vector3f up = new Vector3f(0.0f, 1.0f, 0.0f);
 
-
     // euler angles
     private float yaw = -90.0f;
     private float pitch = 0.0f;
