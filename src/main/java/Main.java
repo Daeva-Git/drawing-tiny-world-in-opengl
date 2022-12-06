@@ -21,8 +21,6 @@ public class Main {
     private int VBO;
     private Shader shader;
 
-    private float deltaTime;
-
     public static void main(String[] args) {
         new Main().run();
     }
@@ -91,7 +89,7 @@ public class Main {
         while (!glfwWindowShouldClose(window.getWindow())) {
             // calculate delta time
             final long currentFrame = System.nanoTime();
-            deltaTime = (currentFrame - lastFrame) / 100000000.0f;
+            final float deltaTime = (currentFrame - lastFrame) / 100000000.0f;
             lastFrame = currentFrame;
 
             // update and draw
