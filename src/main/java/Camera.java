@@ -77,7 +77,7 @@ public class Camera {
     public void mouseScrolled(float deltaTime, float offset) {
         fov += offset * scrollSensitivity * deltaTime;
         if (fov < 1.0f) fov = 1.0f;
-//        if (fov > 90.0f) fov = 90.0f;
+        if (fov > 45.0f) fov = 45.0f;
     }
 
     // calculates the front vector from the Camera's (updated) Euler Angles
