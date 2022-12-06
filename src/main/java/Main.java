@@ -45,11 +45,11 @@ public class Main {
         try (MemoryStack stack = stackPush()) {
             IntBuffer pWidth = stack.mallocInt(1);
             IntBuffer pHeight = stack.mallocInt(1);
-            glfwGetFramebufferSize(window.getWindow(), pWidth, pHeight);
+            glfwGetFramebufferSize(window.getID(), pWidth, pHeight);
             glViewport(0, 0, pWidth.get(0), pHeight.get(0));
         }
 
-        glfwSetFramebufferSizeCallback(window.getWindow(), (window, width, height) -> glViewport(0, 0, width, height));
+        glfwSetFramebufferSizeCallback(window.getID(), (window, width, height) -> glViewport(0, 0, width, height));
 
         shader = new Shader("src/assets/shaders/vertex.shader", "src/assets/shaders/fragment.shader");
 
@@ -78,15 +78,15 @@ public class Main {
         shader.use();
 
         // init mouse position
-        glfwSetCursorPosCallback(window.getWindow(), MouseListener::mousePosCallback);
-        glfwSetMouseButtonCallback(window.getWindow(), MouseListener::mouseButtonCallback);
-        glfwSetScrollCallback(window.getWindow(), MouseListener::mouseScrollCallback);
+        glfwSetCursorPosCallback(window.getID(), MouseListener::mousePosCallback);
+        glfwSetMouseButtonCallback(window.getID(), MouseListener::mouseButtonCallback);
+        glfwSetScrollCallback(window.getID(), MouseListener::mouseScrollCallback);
 
         // keep time for calculating delta time
         long lastFrame = System.nanoTime();
 
         // run the rendering loop until the user has attempted to close the window or has pressed the ESCAPE key.
-        while (!glfwWindowShouldClose(window.getWindow())) {
+        while (!glfwWindowShouldClose(window.getID())) {
             // calculate delta time
             final long currentFrame = System.nanoTime();
             final float deltaTime = (currentFrame - lastFrame) / 100000000.0f;
@@ -97,7 +97,7 @@ public class Main {
             draw(deltaTime);
 
             // swap the color buffers
-            glfwSwapBuffers(window.getWindow());
+            glfwSwapBuffers(window.getID());
             // poll for window events
             glfwPollEvents();
         }
@@ -109,7 +109,7 @@ public class Main {
         }
 
         camera.mouseScrolled(deltaTime, MouseListener.getScrollY());
-        camera.input(window.getWindow(), deltaTime);
+        camera.input(window.getID(), deltaTime);
 
         // update camera
         camera.update(window.getWidth(), window.getHeight());
@@ -118,7 +118,8 @@ public class Main {
 
         // set the clear color
         glClearColor(0.2f, .5f, .8f, 0.5f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
+        // clear the framebuffer
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         shader.setMatrix("model", camera.getModel());
         shader.setMatrix("view", camera.getView());
@@ -135,8 +136,8 @@ public class Main {
         shader.dispose();
 
         // Free the window callbacks and destroy the window
-        glfwFreeCallbacks(window.getWindow());
-        glfwDestroyWindow(window.getWindow());
+        glfwFreeCallbacks(window.getID());
+        glfwDestroyWindow(window.getID());
 
         // Terminate GLFW and free the error callback
         glfwTerminate();
