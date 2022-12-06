@@ -1,8 +1,7 @@
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWMouseButtonCallback;
-import org.lwjgl.glfw.GLFWScrollCallback;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
+import renderer.Shader;
+
 import java.nio.IntBuffer;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -24,10 +23,6 @@ public class Main {
 
     private float deltaTime;
 
-    // input
-    private double[] lastMouseX;
-    private double[] lastMouseY;
-    private boolean mouseDown;
     public static void main(String[] args) {
         new Main().run();
     }
@@ -58,7 +53,7 @@ public class Main {
 
         glfwSetFramebufferSizeCallback(window.getWindow(), (window, width, height) -> glViewport(0, 0, width, height));
 
-        shader = new Shader("src/shaders/vertex.shader", "src/shaders/fragment.shader");
+        shader = new Shader("src/assets/shaders/vertex.shader", "src/assets/shaders/fragment.shader");
 
         // set up vertex data (and buffer(s)) and configure vertex attributes
         // ------------------------------------------------------------------
@@ -84,25 +79,10 @@ public class Main {
         // glBindBuffer(GL_ARRAY_BUFFER, 0);
         shader.use();
 
-        // mouse scroll
-        GLFW.glfwSetScrollCallback(window.getWindow(), new GLFWScrollCallback() {
-            @Override
-            public void invoke (long window, double dx, double dy) {
-                camera.mouseScrolled(deltaTime, (float) dy);
-            }
-        });
-
         // init mouse position
-        lastMouseX = new double[1];
-        lastMouseY = new double[1];
-        glfwGetCursorPos(window.getWindow(), lastMouseX, lastMouseY);
-        GLFW.glfwSetMouseButtonCallback(window.getWindow(), new GLFWMouseButtonCallback() {
-            @Override
-            public void invoke(long window, int button, int action, int mods) {
-                mouseDown = action == 1;
-                glfwGetCursorPos(window, lastMouseX, lastMouseY);
-            }
-        });
+        glfwSetCursorPosCallback(window.getWindow(), MouseListener::mousePosCallback);
+        glfwSetMouseButtonCallback(window.getWindow(), MouseListener::mouseButtonCallback);
+        glfwSetScrollCallback(window.getWindow(), MouseListener::mouseScrollCallback);
 
         // keep time for calculating delta time
         long lastFrame = System.nanoTime();
@@ -126,10 +106,17 @@ public class Main {
     }
 
     private void update (float deltaTime) {
-        input(deltaTime);
+        if (MouseListener.isDragging()) {
+            camera.mouseDragged(deltaTime, MouseListener.getDeltaX(), -MouseListener.getDeltaY());
+        }
+
+        camera.mouseScrolled(deltaTime, MouseListener.getScrollY());
+        camera.input(window.getWindow(), deltaTime);
 
         // update camera
         camera.update(window.getWidth(), window.getHeight());
+
+        MouseListener.endFrame();
 
         // set the clear color
         glClearColor(0.2f, .5f, .8f, 0.5f);
@@ -143,25 +130,6 @@ public class Main {
 
     private void draw (float deltaTime) {
         scene.render();
-    }
-
-    private void input(float deltaTime) {
-        camera.input(window.getWindow(), deltaTime);
-
-        // hande drag
-        if (mouseDown) {
-            double[] currentMouseX = {window.getWidth() / 2.0};
-            double[] currentMouseY = {window.getHeight() / 2.0};
-            glfwGetCursorPos(window.getWindow(), currentMouseX, currentMouseY);
-
-            final float xOffset = (float) (lastMouseX[0] - currentMouseX[0]);
-            final float yOffset = (float) (lastMouseY[0] - currentMouseY[0]);
-
-            camera.mouseDragged(deltaTime, xOffset, -yOffset);
-
-            lastMouseX[0] = currentMouseX[0];
-            lastMouseY[0] = currentMouseY[0];
-        }
     }
 
     private void dispose() {
