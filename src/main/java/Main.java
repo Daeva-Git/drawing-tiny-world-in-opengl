@@ -120,17 +120,17 @@ public class Main {
         shader.setMatrix("view", camera.getView());
         shader.setMatrix("projection", camera.getProjection());
 
-        // set the clear color
-        glClearColor(28 / 255f, 30 / 255f, 38 / 255f, 1f);
-        // clear the framebuffer
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
         MouseListener.endFrame();
 
         shader.dispose();
     }
 
     private void draw (float deltaTime) {
+        // set the clear color
+        glClearColor(28 / 255f, 30 / 255f, 38 / 255f, 1f);
+        // clear the framebuffer
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
         scene.render();
     }
 
