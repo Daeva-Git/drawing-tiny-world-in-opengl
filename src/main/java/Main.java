@@ -1,5 +1,3 @@
-import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWMouseButtonCallback;
 import org.lwjgl.glfw.GLFWScrollCallback;
@@ -104,7 +102,7 @@ public class Main {
         long lastFrame = System.nanoTime();
 
         // run the rendering loop until the user has attempted to close the window or has pressed the ESCAPE key.
-        while (true) {
+        while (!glfwWindowShouldClose(window.getWindow())) {
             // calculate delta time
             final long currentFrame = System.nanoTime();
             final float deltaTime = (currentFrame - lastFrame) / 100000000.0f;
@@ -147,11 +145,6 @@ public class Main {
     private boolean mouseDown;
 
     private void input(float deltaTime) {
-        // escape
-        if (glfwGetKey(window.getWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-            glfwSetWindowShouldClose(window.getWindow(), true);
-        }
-
         camera.input(window.getWindow(), deltaTime);
 
         // hande drag
