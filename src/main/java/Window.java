@@ -1,11 +1,12 @@
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
 
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.GL_TRUE;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -77,6 +78,22 @@ public class Window {
 
         // make the window visible
         glfwShowWindow(id);
+
+        GL.createCapabilities();
+
+        glClearDepth(-1);
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_GREATER);
+
+        // get the thread stack and push a new frame
+        try (MemoryStack stack = stackPush()) {
+            IntBuffer pWidth = stack.mallocInt(1);
+            IntBuffer pHeight = stack.mallocInt(1);
+            glfwGetFramebufferSize(id, pWidth, pHeight);
+            glViewport(0, 0, pWidth.get(0), pHeight.get(0));
+        } // the stack frame is popped automatically
+
+        glfwSetFramebufferSizeCallback(id, (window, width, height) -> glViewport(0, 0, width, height));
     }
 
     public int getWidth () {

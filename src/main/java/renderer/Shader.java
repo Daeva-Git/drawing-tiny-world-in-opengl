@@ -1,3 +1,5 @@
+package renderer;
+
 import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL20;
@@ -89,6 +91,10 @@ public class Shader {
 
     public void setMatrix(String name, Matrix4f value) {
         GL20.glUniformMatrix4fv(GL20.glGetUniformLocation(ID, name), false, value.get(fb));
+    }
+
+    public void setTexture(String name, int slot) {
+        GL20.glUniform1i(GL20.glGetUniformLocation(ID, name), slot);
     }
 
     public void dispose() {

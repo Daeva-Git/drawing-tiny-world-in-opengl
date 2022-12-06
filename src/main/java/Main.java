@@ -1,25 +1,22 @@
-import org.lwjgl.opengl.GL;
-import org.lwjgl.system.MemoryStack;
 import renderer.Shader;
 
-import java.nio.IntBuffer;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.ARBVertexArrayObject.glBindVertexArray;
 import static org.lwjgl.opengl.ARBVertexArrayObject.glGenVertexArrays;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
-import static org.lwjgl.system.MemoryStack.stackPush;
+import static org.lwjgl.opengl.GL20C.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
 public class Main {
     private Scene scene;
     private Window window;
     private Camera camera;
+    private FrameBuffer frameBuffer;
 
     private int VBO;
-    private Shader shader;
+    private Shader defaultShader;
 
     public static void main(String[] args) {
         new Main().run();
@@ -35,23 +32,11 @@ public class Main {
         scene = new Scene();
         window = new Window(1920, 1080);
         camera = new Camera();
+        frameBuffer = new FrameBuffer(1920, 1080);
     }
 
     private void start() {
-        GL.createCapabilities();
-        glClearDepth(-1);
-        glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_GREATER);
-        try (MemoryStack stack = stackPush()) {
-            IntBuffer pWidth = stack.mallocInt(1);
-            IntBuffer pHeight = stack.mallocInt(1);
-            glfwGetFramebufferSize(window.getID(), pWidth, pHeight);
-            glViewport(0, 0, pWidth.get(0), pHeight.get(0));
-        }
-
-        glfwSetFramebufferSizeCallback(window.getID(), (window, width, height) -> glViewport(0, 0, width, height));
-
-        shader = new Shader("src/assets/shaders/vertex.shader", "src/assets/shaders/fragment.shader");
+        defaultShader = new Shader("src/assets/shaders/vertex.shader", "src/assets/shaders/fragment.shader");
 
         // set up vertex data (and buffer(s)) and configure vertex attributes
         // ------------------------------------------------------------------
@@ -74,9 +59,6 @@ public class Main {
         glVertexAttribPointer(1, 3, GL_FLOAT, false, 4 * 5, 2*4);
         glEnableVertexAttribArray(1);
 
-        // glBindBuffer(GL_ARRAY_BUFFER, 0);
-        shader.use();
-
         // init mouse position
         glfwSetCursorPosCallback(window.getID(), MouseListener::mousePosCallback);
         glfwSetMouseButtonCallback(window.getID(), MouseListener::mouseButtonCallback);
@@ -94,7 +76,7 @@ public class Main {
 
             // update and draw
             update(deltaTime);
-            draw(deltaTime);
+            render(deltaTime);
 
             // swap the color buffers
             glfwSwapBuffers(window.getID());
@@ -104,7 +86,7 @@ public class Main {
     }
 
     private void update (float deltaTime) {
-        shader.use();
+        defaultShader.use();
 
         // camera
         if (MouseListener.isDragging()) {
@@ -116,20 +98,25 @@ public class Main {
         camera.update(window.getWidth(), window.getHeight());
 
         // shaders
-        shader.setMatrix("model", camera.getModel());
-        shader.setMatrix("view", camera.getView());
-        shader.setMatrix("projection", camera.getProjection());
+        defaultShader.setMatrix("model", camera.getModel());
+        defaultShader.setMatrix("view", camera.getView());
+        defaultShader.setMatrix("projection", camera.getProjection());
 
         MouseListener.endFrame();
 
-        shader.dispose();
+        defaultShader.dispose();
     }
 
-    private void draw (float deltaTime) {
+    private void render (float deltaTime) {
         // set the clear color
         glClearColor(28 / 255f, 30 / 255f, 38 / 255f, 1f);
         // clear the framebuffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // TODO: 12/7/2022 test
+        frameBuffer.bind();
+        frameBuffer.unbind();
+        // TODO: 12/7/2022 test
 
         scene.render();
     }
