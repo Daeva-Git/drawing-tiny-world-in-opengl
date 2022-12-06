@@ -1,7 +1,7 @@
 import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.glDrawArrays;
 
-public class World {
+public class Scene {
     public void render () {
         renderTerrain();
         renderGrass();

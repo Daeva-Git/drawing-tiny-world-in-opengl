@@ -15,7 +15,7 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class Main {
-    private World world;
+    private Scene scene;
     private Window window;
     private Camera camera;
 
@@ -39,7 +39,7 @@ public class Main {
     }
 
     private void init() {
-        world = new World();
+        scene = new Scene();
         window = new Window(1920, 1080);
         camera = new Camera();
     }
@@ -142,7 +142,7 @@ public class Main {
     }
 
     private void draw (float deltaTime) {
-        world.render();
+        scene.render();
     }
 
     private void input(float deltaTime) {
