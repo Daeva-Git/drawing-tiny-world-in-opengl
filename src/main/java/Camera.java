@@ -19,8 +19,9 @@ public class Camera {
     private float pitch = 0.0f;
 
     // options
-    private float movementSpeed = 0.5f;
-    private float mouseSensitivity = 0.05f;
+    private float movementSpeed = 0.3f;
+    private float mouseSensitivity = 1f;
+    private float scrollSensitivity = 100f;
     private float fov = 45.0f;
     private float near = 0.1f;
     private float far = 100;
@@ -53,11 +54,8 @@ public class Camera {
 
     // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
     public void mouseDragged (float deltaTime, float xOffset, float yOffset, boolean constrainPitch) {
-        xOffset *= mouseSensitivity * deltaTime;
-        yOffset *= mouseSensitivity * deltaTime;
-
-        yaw += xOffset;
-        pitch += yOffset;
+        yaw += xOffset * mouseSensitivity * deltaTime;
+        pitch += yOffset * mouseSensitivity * deltaTime;
 
         // make sure that when pitch is out of bounds, screen doesn't get flipped
         if (constrainPitch) {
@@ -78,9 +76,9 @@ public class Camera {
 
     // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
     public void mouseScrolled(float deltaTime, float offset) {
-        fov -= offset * deltaTime;
+        fov += offset * scrollSensitivity * deltaTime;
         if (fov < 1.0f) fov = 1.0f;
-        if (fov > 45.0f) fov = 45.0f;
+//        if (fov > 90.0f) fov = 90.0f;
     }
 
     // calculates the front vector from the Camera's (updated) Euler Angles
@@ -93,14 +91,11 @@ public class Camera {
         front.normalize();
     }
 
-    // TODO: 06.12.22 remove (done for testing)
     public void update (int width, int height) {
         model = new Matrix4f();
         view = new Matrix4f().lookAt(position, new Vector3f(position).add(front), up);
-
         projection.identity();
         projection.perspective((float) Math.toRadians(fov), (float) width / height, near, far);
-
         model.identity();
     }
 

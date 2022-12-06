@@ -15,9 +15,19 @@ import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class Main {
+    private World world;
+    private Window window;
+    private Camera camera;
+
     private int VBO;
     private Shader shader;
 
+    private float deltaTime;
+
+    // input
+    private double[] lastMouseX;
+    private double[] lastMouseY;
+    private boolean mouseDown;
     public static void main(String[] args) {
         new Main().run();
     }
@@ -27,10 +37,6 @@ public class Main {
         start();
         dispose();
     }
-
-    private World world;
-    private Window window;
-    private Camera camera;
 
     private void init() {
         world = new World();
@@ -82,7 +88,7 @@ public class Main {
         GLFW.glfwSetScrollCallback(window.getWindow(), new GLFWScrollCallback() {
             @Override
             public void invoke (long window, double dx, double dy) {
-                camera.mouseScrolled(window, (float) dy);
+                camera.mouseScrolled(deltaTime, (float) dy);
             }
         });
 
@@ -105,7 +111,7 @@ public class Main {
         while (!glfwWindowShouldClose(window.getWindow())) {
             // calculate delta time
             final long currentFrame = System.nanoTime();
-            final float deltaTime = (currentFrame - lastFrame) / 100000000.0f;
+            deltaTime = (currentFrame - lastFrame) / 100000000.0f;
             lastFrame = currentFrame;
 
             // update and draw
@@ -138,11 +144,6 @@ public class Main {
     private void draw (float deltaTime) {
         world.render();
     }
-
-    private double[] lastMouseX;
-    private double[] lastMouseY;
-
-    private boolean mouseDown;
 
     private void input(float deltaTime) {
         camera.input(window.getWindow(), deltaTime);
