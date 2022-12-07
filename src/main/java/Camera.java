@@ -3,11 +3,10 @@ import org.joml.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-public class Camera {
+public class Camera implements GameObject {
     // attributes
     private Matrix4f projection = new Matrix4f();
     private Matrix4f view = new Matrix4f();
-    private Matrix4f model = new Matrix4f();
 
     private Vector3f position = new Vector3f(0.0f, 0.0f, 3.0f);
     private Vector3f front = new Vector3f(0.0f, 0.0f, -1.0f);
@@ -25,30 +24,45 @@ public class Camera {
     private float near = 0.1f;
     private float far = 100;
 
-    public Camera (Vector3f up, Vector3f front) {
-        this.up = up;
-        this.front = front;
-        updateCameraVectors();
-    }
-
     public Camera () {
         updateCameraVectors();
     }
 
-    public void input (long window, float deltaTime) {
+    @Override
+    public void update (float deltaTime) {
+        // check mouse movement
+        if (MouseListener.isDragging()) {
+            mouseDragged(deltaTime, MouseListener.getDeltaX(), -MouseListener.getDeltaY());
+        }
+        // check scroll
+        mouseScrolled(deltaTime, MouseListener.getScrollY());
+
+        // check key pressing
         final float velocity = movementSpeed * deltaTime;
-
-        // front back movement
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        if (glfwGetKey((Demo.instance.getWindow().getID()), GLFW_KEY_W) == GLFW_PRESS)
             position.add(new Vector3f(front).mul(velocity));
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        if (glfwGetKey((Demo.instance.getWindow().getID()), GLFW_KEY_S) == GLFW_PRESS)
             position.sub(new Vector3f(front).mul(velocity));
-
-        // horizontal movement
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        if (glfwGetKey((Demo.instance.getWindow().getID()), GLFW_KEY_A) == GLFW_PRESS)
             position.sub(new Vector3f(new Vector3f(front).cross(up)).normalize().mul(velocity));
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        if (glfwGetKey((Demo.instance.getWindow().getID()), GLFW_KEY_D) == GLFW_PRESS)
             position.add(new Vector3f(new Vector3f(front).cross(up)).normalize().mul(velocity));
+
+        // update camera
+        final float aspect = Demo.instance.getWindow().getWidth() / (float) Demo.instance.getWindow().getHeight();
+        view = new Matrix4f().lookAt(position, new Vector3f(position).add(front), up);
+        projection.identity();
+        projection.perspective((float) Math.toRadians(fov), aspect, near, far);
+    }
+
+    @Override
+    public void render() {
+
+    }
+
+    @Override
+    public void dispose() {
+
     }
 
     // processes input received from a mouse input system. Expects the offset value in both the x and y direction.
@@ -66,16 +80,11 @@ public class Camera {
 
         // update Front, Right and Up Vectors using the updated Euler angles
         updateCameraVectors();
-
-        System.out.println("front = " + front);
-        System.out.println("position = " + position);
-        System.out.println(pitch);
     }
 
     public void mouseDragged (float deltaTime, float xOffset, float yOffset) {
         this.mouseDragged(deltaTime, xOffset, yOffset, true);
     }
-
 
     // processes input received from a mouse scroll-wheel event. Only requires input on the vertical wheel-axis
     public void mouseScrolled(float deltaTime, float offset) {
@@ -94,24 +103,12 @@ public class Camera {
         front.normalize();
     }
 
-    public void update (int width, int height) {
-        model = new Matrix4f();
-        view = new Matrix4f().lookAt(position, new Vector3f(position).add(front), up);
-        projection.identity();
-        projection.perspective((float) Math.toRadians(fov), (float) width / height, near, far);
-        model.identity();
-    }
-
     public Matrix4f getProjection () {
         return this.projection;
     }
 
     public Matrix4f getView () {
         return this.view;
-    }
-
-    public Matrix4f getModel () {
-        return this.model;
     }
 
     public void setPitch (float pitch) {
