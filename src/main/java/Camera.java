@@ -66,6 +66,10 @@ public class Camera {
 
         // update Front, Right and Up Vectors using the updated Euler angles
         updateCameraVectors();
+
+        System.out.println("front = " + front);
+        System.out.println("position = " + position);
+        System.out.println(pitch);
     }
 
     public void mouseDragged (float deltaTime, float xOffset, float yOffset) {
@@ -108,5 +112,17 @@ public class Camera {
 
     public Matrix4f getModel () {
         return this.model;
+    }
+
+    public void setPitch (float pitch) {
+        this.pitch = pitch;
+    }
+
+    public void setFront (Vector3f front) {
+        this.front = front;
+    }
+
+    public void setPosition (Vector3f position) {
+        this.position = position;
     }
 }

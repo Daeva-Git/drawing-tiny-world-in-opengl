@@ -1,4 +1,6 @@
+import org.joml.Vector3f;
 import renderer.Shader;
+import renderer.Water;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -15,7 +17,8 @@ public class Main {
     private Camera camera;
     private FrameBuffer frameBuffer;
 
-    private int VBO;
+    private Water water;
+    private int VAO, VBO, EBO;
     private Shader defaultShader;
 
     public static void main(String[] args) {
@@ -29,35 +32,50 @@ public class Main {
     }
 
     private void init() {
+        int width = 500;
+        int height = 500;
+
         scene = new Scene();
-        window = new Window(1920, 1080);
+        window = new Window(width, height);
         camera = new Camera();
-        frameBuffer = new FrameBuffer(1920, 1080);
+        camera.setPosition(new Vector3f(-9.964E-3f,  1.180E+0f,  1.908E+0f));
+        camera.setFront(new Vector3f(-1.160E-2f, -5.478E-1f, -8.365E-1f));
+        camera.setPitch(-27);
+//        frameBuffer = new FrameBuffer(width, height);
+
+        water = new Water();
     }
 
     private void start() {
         defaultShader = new Shader("src/assets/shaders/vertex.shader", "src/assets/shaders/fragment.shader");
 
-        // set up vertex data (and buffer(s)) and configure vertex attributes
-        // ------------------------------------------------------------------
-        float vertices[] = {
-                -0.5f, -0.5f,  1.0f, 0.0f, 0.0f,
-                0.0f,  0.5f,  0.0f, 0.0f, 1.0f,
-                0.5f, -0.5f,  0.0f, 1.0f, 0.0f
-        };
+        VBO = glGenVertexArrays();
+        VAO = glGenBuffers();
+        EBO = glGenBuffers();
 
-        int VAO = glGenVertexArrays();
         glBindVertexArray(VAO);
 
-        VBO = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, water.getVertices(), GL_STATIC_DRAW);
 
-        glVertexAttribPointer(0, 2, GL_FLOAT, false, 4 * 5, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, water.getIndices(), GL_STATIC_DRAW);
+
+        // position
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, 8 * 4, 0);
         glEnableVertexAttribArray(0);
 
-        glVertexAttribPointer(1, 3, GL_FLOAT, false, 4 * 5, 2*4);
+        // TODO: 07.12.22 change into normals (color for now)
+        // normals
+        glVertexAttribPointer(1, 3, GL_FLOAT, false, 8 * 4, 3 * 4);
         glEnableVertexAttribArray(1);
+
+        // texture
+        glVertexAttribPointer(2, 2, GL_FLOAT, false, 8 * 4, 6 * 4);
+        glEnableVertexAttribArray(2);
+
+        // TODO: 07.12.22 remove
+        defaultShader.setTexture("texture", water.getTexture().getID());
 
         // init mouse position
         glfwSetCursorPosCallback(window.getID(), MouseListener::mousePosCallback);
@@ -113,9 +131,13 @@ public class Main {
         // clear the framebuffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+        glBindVertexArray(VAO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
         // TODO: 12/7/2022 test
-        frameBuffer.bind();
-        frameBuffer.unbind();
+//        frameBuffer.bind();
+//
+//        frameBuffer.unbind();
         // TODO: 12/7/2022 test
 
         scene.render();
@@ -123,6 +145,8 @@ public class Main {
 
     private void dispose() {
         glDeleteBuffers(VBO);
+        glDeleteBuffers(VAO);
+        glDeleteBuffers(EBO);
 
         // Free the window callbacks and destroy the window
         glfwFreeCallbacks(window.getID());
