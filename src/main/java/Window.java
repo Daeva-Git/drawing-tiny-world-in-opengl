@@ -81,9 +81,9 @@ public class Window {
 
         GL.createCapabilities();
 
-        glClearDepth(-1);
+        glClearDepth(1);
         glEnable(GL_DEPTH_TEST);
-        glDepthFunc(GL_GREATER);
+        glDepthFunc(GL_LESS);
 
         // get the thread stack and push a new frame
         try (MemoryStack stack = stackPush()) {

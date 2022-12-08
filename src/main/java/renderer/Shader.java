@@ -71,7 +71,7 @@ public class Shader {
     }
 
     // use/activate the shader
-    public void use() {
+    public void bind() {
         GL20.glUseProgram(ID);
     }
 
@@ -97,7 +97,7 @@ public class Shader {
         GL20.glUniform1i(GL20.glGetUniformLocation(ID, name), slot);
     }
 
-    public void dispose() {
+    public void unbind() {
         GL20.glDeleteProgram(ID);
     }
 }

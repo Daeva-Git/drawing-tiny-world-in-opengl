@@ -2,8 +2,11 @@ package renderer;
 public class Surface {
     private final int[] indices;
     private final float[] vertices;
+    private int size;
 
     public Surface(int verticalVerticesCount, int horizontalVerticesCount, int size) {
+        this.size = size;
+
         this.indices = generateIndices(verticalVerticesCount, horizontalVerticesCount);
         this.vertices = generateVertices(verticalVerticesCount, horizontalVerticesCount);
     }
@@ -15,21 +18,16 @@ public class Surface {
 
         for (int y = 0; y < horizontalVerticesCount; y++) {
             for (int x = 0; x < verticalVerticesCount; x++) {
-                final float xRatio = x / (float) (verticalVerticesCount - 1) - 0.5f;
+                final float xRatio = x / (float) (verticalVerticesCount - 1);
                 final float zRatio = 1f - (y / (float) (horizontalVerticesCount - 1));
 
-                final float xPosition = xRatio;
-                final float zPosition = zRatio;
+                final float xPosition = xRatio * size - size * 0.5f;
+                final float zPosition = zRatio * size - size * 0.5f;
 
                 // position
                 heightMapVertexData[offset++] = xPosition;
                 heightMapVertexData[offset++] = 0;
                 heightMapVertexData[offset++] = zPosition;
-
-                // normal
-//                heightMapVertexData[offset++] = 0;
-//                heightMapVertexData[offset++] = 1;
-//                heightMapVertexData[offset++] = 0;
 
                 // texture
                 heightMapVertexData[offset++] = xRatio;

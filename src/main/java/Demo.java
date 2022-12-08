@@ -2,9 +2,7 @@ import renderer.Utils;
 
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
-import static org.lwjgl.opengl.GL20C.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL32.*;
 
 public class Demo {
     private Scene scene;
@@ -28,16 +26,6 @@ public class Demo {
     }
 
     private void start() {
-        final int stride = (Utils.POSITION_DATA_SIZE_IN_ELEMENTS + Utils.TEXTURE_DATA_SIZE_IN_ELEMENTS) * 4;
-
-        // position
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, stride, 0);
-        glEnableVertexAttribArray(0);
-
-        // texture
-        glVertexAttribPointer(1, 2, GL_FLOAT, false, stride, Utils.POSITION_DATA_SIZE_IN_ELEMENTS * 4);
-        glEnableVertexAttribArray(1);
-
         // init mouse position
         glfwSetCursorPosCallback(window.getID(), MouseListener::mousePosCallback);
         glfwSetMouseButtonCallback(window.getID(), MouseListener::mouseButtonCallback);
@@ -76,6 +64,7 @@ public class Demo {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         scene.render();
+//        glBindVertexArray(0);
     }
 
     private void dispose() {

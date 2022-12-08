@@ -3,16 +3,15 @@ import org.joml.Vector3f;
 import renderer.Shader;
 import renderer.Surface;
 import renderer.Texture;
+import renderer.Utils;
 
 import static org.lwjgl.opengl.ARBVertexArrayObject.glGenVertexArrays;
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL15.GL_STATIC_DRAW;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
+import static org.lwjgl.opengl.GL32.*;
 
 public class Terrain implements GameObject {
     private final Shader shader;
     private final Texture texture;
+    private final Texture heightMapTexture;
     private final Surface surface;
     private final Matrix4f model;
 
@@ -22,12 +21,13 @@ public class Terrain implements GameObject {
 
     public Terrain () {
         shader = new Shader("src/assets/shaders/terrain.vert", "src/assets/shaders/terrain.frag");
-        texture = new Texture("src/assets/images/TerrainDiffuse.png");
-        surface = new Surface(5, 5, 1);
+        texture = new Texture("src/assets/images/TerrainDiffuse.png", GL_TEXTURE1);
+        heightMapTexture = new Texture("src/assets/images/TerrainDiffuse.png", GL_TEXTURE2);
+        surface = new Surface(20, 20, 1);
         model = new Matrix4f().identity();
 
-        VAO = glGenBuffers();
-        VBO = glGenVertexArrays();
+        VAO = glGenVertexArrays();
+        VBO = glGenBuffers();
         EBO = glGenBuffers();
 
         glBindVertexArray(VAO);
@@ -35,24 +35,36 @@ public class Terrain implements GameObject {
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
         glBufferData(GL_ARRAY_BUFFER, surface.getVertices(), GL_STATIC_DRAW);
 
+        // position
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, Utils.STRIDE, 0);
+        glEnableVertexAttribArray(0);
+
+        // texture
+        glVertexAttribPointer(1, 2, GL_FLOAT, false, Utils.STRIDE, Utils.POSITION_DATA_SIZE_IN_ELEMENTS * 4);
+        glEnableVertexAttribArray(1);
+
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, surface.getIndices(), GL_STATIC_DRAW);
 
-        shader.setTexture("texture", texture.getID());
+        shader.bind();
+        shader.setTexture("terrainTexture", 1);
     }
 
     @Override
     public void update (float deltaTime) {
-        shader.use();
-        shader.setMatrix("model", model);
-        shader.setMatrix("view", Demo.instance.getScene().getCamera().getView());
-        shader.setMatrix("projection", Demo.instance.getScene().getCamera().getProjection());
-        shader.dispose();
+
     }
 
     @Override
     public void render () {
+        shader.bind();
+
         glBindVertexArray(VAO);
+
+        shader.setMatrix("model", model);
+        shader.setMatrix("view", Demo.instance.getScene().getCamera().getView());
+        shader.setMatrix("projection", Demo.instance.getScene().getCamera().getProjection());
+
         glDrawElements(GL_TRIANGLE_STRIP, surface.getIndices().length, GL_UNSIGNED_INT, 0);
     }
 
@@ -61,6 +73,8 @@ public class Terrain implements GameObject {
         glDeleteBuffers(VAO);
         glDeleteBuffers(VBO);
         glDeleteBuffers(EBO);
+
+        shader.unbind();
     }
 
     public void translate (float tx, float ty, float tz) {

@@ -2,12 +2,6 @@ import org.joml.Vector3f;
 
 import java.util.ArrayList;
 
-import static org.lwjgl.opengl.ARBVertexArrayObject.glGenVertexArrays;
-import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
-import static org.lwjgl.opengl.GL11.glDrawArrays;
-import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
-
 public class Scene {
     private final Camera camera;
     private final ArrayList<GameObject> gameObjects;
@@ -21,12 +15,14 @@ public class Scene {
         camera.setPitch(-27);
 
         final Water water = new Water();
+        water.translate(0, -0.2f, 0);
+
         final Terrain terrain = new Terrain();
-        terrain.translate(1, 0, 0);
+        terrain.translate(0.5f, 0, 0);
 
         gameObjects.add(camera);
-        gameObjects.add(water);
         gameObjects.add(terrain);
+        gameObjects.add(water);
     }
 
     public void update (float deltaTime) {
