@@ -15,10 +15,9 @@ public class Scene {
         camera.setPitch(-27);
 
         final Water water = new Water();
-        water.translate(0, -0.2f, 0);
-
         final Terrain terrain = new Terrain();
-        terrain.translate(0.5f, 0, 0);
+
+//        water.translate(0, -0.02f, 0);
 
         gameObjects.add(camera);
         gameObjects.add(terrain);
