@@ -22,7 +22,7 @@ public class Terrain implements GameObject {
     public Terrain () {
         shader = new Shader("src/assets/shaders", "terrain");
         texture = new Texture("src/assets/images/TerrainDiffuse.png", GL_TEXTURE1);
-        heightMapTexture = new Texture("src/assets/images/TerrainDiffuse.png", GL_TEXTURE2);
+        heightMapTexture = new Texture("src/assets/images/TerrainHeightMap.png", GL_TEXTURE2);
         surface = new Surface(20, 20, 1);
         model = new Matrix4f().identity();
 
@@ -47,7 +47,8 @@ public class Terrain implements GameObject {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, surface.getIndices(), GL_STATIC_DRAW);
 
         shader.bind();
-        shader.setTexture("terrainTexture", 1);
+        shader.setTexture("Texture", 1);
+        shader.setTexture("heightmap", 2);
     }
 
     @Override
