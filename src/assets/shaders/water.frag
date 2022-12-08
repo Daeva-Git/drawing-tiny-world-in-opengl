@@ -3,12 +3,12 @@ out vec4 FragColor;
 
 in vec2 TexCoords;
 
-uniform sampler2D waterTexture;
+uniform sampler2D Texture;
 uniform float timePassed;
 
 void main()
 {
     vec2 uv = TexCoords;
-    uv.y = uv.y + timePassed;
-    FragColor = texture(waterTexture, uv);
+    uv.x = uv.x + timePassed;
+    FragColor = texture(Texture, uv);
 }

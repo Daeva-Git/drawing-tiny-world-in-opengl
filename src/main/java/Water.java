@@ -45,7 +45,7 @@ public class Water implements GameObject {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, surface.getIndices(), GL_STATIC_DRAW);
 
         shader.bind();
-        shader.setTexture("waterTexture", 0);
+        shader.setTexture("Texture", 0);
     }
 
     private float timePassed = 0;
