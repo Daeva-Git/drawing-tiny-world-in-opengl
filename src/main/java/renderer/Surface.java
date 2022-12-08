@@ -1,4 +1,5 @@
 package renderer;
+
 public class Surface {
     private final int[] indices;
     private final float[] vertices;

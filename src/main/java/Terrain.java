@@ -20,7 +20,7 @@ public class Terrain implements GameObject {
     private final int EBO;
 
     public Terrain () {
-        shader = new Shader("src/assets/shaders/terrain.vert", "src/assets/shaders/terrain.frag");
+        shader = new Shader("src/assets/shaders", "terrain");
         texture = new Texture("src/assets/images/TerrainDiffuse.png", GL_TEXTURE1);
         heightMapTexture = new Texture("src/assets/images/TerrainDiffuse.png", GL_TEXTURE2);
         surface = new Surface(20, 20, 1);

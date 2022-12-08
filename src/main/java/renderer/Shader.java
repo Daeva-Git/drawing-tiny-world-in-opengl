@@ -2,12 +2,13 @@ package renderer;
 
 import org.joml.Matrix4f;
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.GL20;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.FloatBuffer;
+
+import static org.lwjgl.opengl.GL32.*;
 
 public class Shader {
     // program ID
@@ -31,73 +32,80 @@ public class Shader {
     }
 
     int CompileShader(int type, String source) {
-        int id;
-        id = GL20.glCreateShader(type);
-        GL20.glShaderSource(id, source);
-        GL20.glCompileShader(id);
+        int id = glCreateShader(type);
+        glShaderSource(id, source);
+        glCompileShader(id);
         // check for shader compile errors
         int success[] = new int[1];
-        GL20.glGetShaderiv(id, GL20.GL_COMPILE_STATUS, success);
+        glGetShaderiv(id, GL_COMPILE_STATUS, success);
         if (success[0] == 0) {
-            String infoLog = GL20.glGetShaderInfoLog(id, 512);
+            String infoLog = glGetShaderInfoLog(id, 512);
             System.out.println("ERROR::SHADER::VERTEX::COMPILATION_FAILED\\n" + infoLog + "\n");
         }
         return id;
     }
 
-
     // constructor reads and builds the shader
-    public Shader(String vertexPath, String fragmentPath) {
+    public Shader(String path, String name) {
+        final String vertexPath = path + "/" + name + ".vert";
+        final String fragmentPath = path + "/" + name + ".frag";
+        final String geometryPath = path + "/" + name + ".geom";
 
-        String vertexSource = ParseShader(vertexPath);
-        String fragmentSource = ParseShader(fragmentPath);
-        int vertexID = CompileShader(GL20.GL_VERTEX_SHADER, vertexSource);
-        int fragmentID = CompileShader(GL20.GL_FRAGMENT_SHADER, fragmentSource);
+        final String vertexSource = ParseShader(vertexPath);
+        final String fragmentSource = ParseShader(fragmentPath);
+        final String geometrySource = ParseShader(geometryPath);
 
-        ID = GL20.glCreateProgram();
-        GL20.glAttachShader(ID, vertexID);
-        GL20.glAttachShader(ID, fragmentID);
-        GL20.glLinkProgram(ID);
+        final int vertexID = CompileShader(GL_VERTEX_SHADER, vertexSource);
+        final int fragmentID = CompileShader(GL_FRAGMENT_SHADER, fragmentSource);
+        final int geometryID = CompileShader(GL_GEOMETRY_SHADER, geometrySource);
+
+        ID = glCreateProgram();
+        glAttachShader(ID, vertexID);
+        glAttachShader(ID, fragmentID);
+        glAttachShader(ID, geometryID);
+        glLinkProgram(ID);
 
         int success[] = new int[1];
-        GL20.glGetProgramiv(ID, GL20.GL_LINK_STATUS, success);
+        glGetProgramiv(ID, GL_LINK_STATUS, success);
         if (success[0] == 0) {
-            String infoLog = GL20.glGetProgramInfoLog(ID, 512);
+            String infoLog = glGetProgramInfoLog(ID, 512);
             System.out.println("ERROR::SHADER::PROGRAM::LINKING_FAILED\n" + infoLog + "\n");
         }
+
         // delete the shaders as they're linked into our program now and no longer necessary
-        GL20.glDeleteShader(vertexID);
-        GL20.glDeleteShader(fragmentID);
+        glDeleteShader(vertexID);
+        glDeleteShader(fragmentID);
+        glDeleteShader(geometryID);
     }
 
     // use/activate the shader
     public void bind() {
-        GL20.glUseProgram(ID);
+        glUseProgram(ID);
     }
 
     // utility uniform functions
     public void setBool(String name, boolean value) {
         int val = value ? 1 : 0;
-        GL20.glUniform1i(GL20.glGetUniformLocation(ID, name), val);
+        glUniform1i(glGetUniformLocation(ID, name), val);
     }
 
     public void setInt(String name, int value) {
-        GL20.glUniform1i(GL20.glGetUniformLocation(ID, name), value);
+        glUniform1i(glGetUniformLocation(ID, name), value);
     }
 
     public void setFloat(String name, float value) {
-        GL20.glUniform1f(GL20.glGetUniformLocation(ID, name), value);
+        glUniform1f(glGetUniformLocation(ID, name), value);
     }
 
     public void setMatrix(String name, Matrix4f value) {
-        GL20.glUniformMatrix4fv(GL20.glGetUniformLocation(ID, name), false, value.get(fb));
+        glUniformMatrix4fv(glGetUniformLocation(ID, name), false, value.get(fb));
     }
 
     public void setTexture(String name, int slot) {
-        GL20.glUniform1i(GL20.glGetUniformLocation(ID, name), slot);
+        glUniform1i(glGetUniformLocation(ID, name), slot);
     }
 
     public void unbind() {
-        GL20.glDeleteProgram(ID);
+        glDeleteProgram(ID);
     }
 }

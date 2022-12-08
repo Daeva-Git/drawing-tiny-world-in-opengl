@@ -10,7 +10,7 @@ public class Scene {
         gameObjects = new ArrayList<>();
 
         camera = new Camera();
-        camera.setPosition(new Vector3f(-9.964E-3f,  1.180E+0f,  1.908E+0f));
+        camera.setPosition(new Vector3f(-9.964E-3f,  1.180E+0f, 1.908E+0f));
         camera.setFront(new Vector3f(-1.160E-2f, -5.478E-1f, -8.365E-1f));
         camera.setPitch(-27);
 
