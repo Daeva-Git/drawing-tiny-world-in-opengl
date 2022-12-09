@@ -58,10 +58,10 @@ public class Water implements GameObject {
 
     @Override
     public void render() {
-        shader.bind();
-
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
         glBindVertexArray(VAO);
 
+        shader.bind();
         shader.setMatrix("model", model);
         final Camera camera = Demo.instance.getScene().getCamera();
         shader.setMatrix("view", camera.getView());

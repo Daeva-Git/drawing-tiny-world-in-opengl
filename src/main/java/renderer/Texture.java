@@ -26,7 +26,11 @@ public class Texture {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
     }
 
-    public Texture(String path, int slot) {
+    public Texture (String path, int slot) {
+        this(path, slot, false);
+    }
+
+    public Texture(String path, int slot, boolean hasAlpha) {
         // generate texture on GPU
         this.id = glGenTextures();
         this.slot = slot;
@@ -45,7 +49,8 @@ public class Texture {
         final IntBuffer channels = BufferUtils.createIntBuffer(1);
         final ByteBuffer image = stbi_load(path, width, height, channels, 0);
 
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width.get(0), height.get(0), 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+        int glRGB = hasAlpha ? GL_RGBA : GL_RGB;
+        glTexImage2D(GL_TEXTURE_2D, 0, glRGB, width.get(0), height.get(0), 0, glRGB, GL_UNSIGNED_BYTE, image);
         glGenerateMipmap(GL_TEXTURE_2D);
         stbi_image_free(image);
     }

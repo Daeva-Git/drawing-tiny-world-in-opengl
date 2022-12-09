@@ -82,6 +82,9 @@ public class Window {
         GL.createCapabilities();
 
         glClearDepth(1);
+
+        glEnable(GL_BLEND);
+
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
 
