@@ -1,5 +1,4 @@
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import renderer.Shader;
 import renderer.Surface;
 import renderer.Texture;
@@ -58,7 +57,6 @@ public class Water implements GameObject {
 
     @Override
     public void render() {
-        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
         glBindVertexArray(VAO);
 
         shader.bind();

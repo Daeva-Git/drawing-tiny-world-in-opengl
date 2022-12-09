@@ -17,7 +17,7 @@ public class Camera implements GameObject {
     private float pitch = 0.0f;
 
     // options
-    private float movementSpeed = 0.3f;
+    private float movementSpeed = 0.1f;
     private float mouseSensitivity = 1f;
     private float scrollSensitivity = 100f;
     private float fov = 45.0f;

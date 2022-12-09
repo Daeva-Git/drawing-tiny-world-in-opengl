@@ -26,31 +26,26 @@ vec3 getNormal(vec4 pos0, vec4 pos1, vec4 pos2){
 void generateGrassObj(vec4 position){
     gs_out.norm = getNormal(gl_in[0].gl_Position, gl_in[1].gl_Position, gl_in[2].gl_Position);
 
-    vec4 pos0 = vec4(0, 0, 0, 1.0);
-    vec4 pos1 = vec4(0, size, 0, 1.0);
-    vec4 pos2 = vec4(size, 0, 0, 1.0);
-    vec4 pos3 = vec4(size, size, 0, 1.0);
-
     mat4 MVP = projection * view * model;
 
     position.y += size;
 
-    gl_Position = MVP * (position + pos0);
+    gl_Position = MVP * (position - vec4(size, size, 0.0, 0.0));
     gl_Position = vec4(gl_Position.xyz / gl_Position.w, 1.0);
     gs_out.texCoord = vec2(1, 1);
     EmitVertex();
 
-    gl_Position = MVP * (position + pos1);
+    gl_Position = MVP * (position - vec4(size, 0.0, 0.0, 0.0));
     gl_Position = vec4(gl_Position.xyz / gl_Position.w, 1.0);
     gs_out.texCoord = vec2(1, 0);
     EmitVertex();
 
-    gl_Position = MVP * (position + pos2);
+    gl_Position = MVP * (position - vec4(0.0, size, 0.0, 0.0));
     gl_Position = vec4(gl_Position.xyz / gl_Position.w, 1.0);
     gs_out.texCoord = vec2(0, 1);
     EmitVertex();
 
-    gl_Position = MVP * (position + pos3);
+    gl_Position = MVP * (position);
     gl_Position = vec4(gl_Position.xyz / gl_Position.w, 1.0);
     gs_out.texCoord = vec2(0, 0);
     EmitVertex();

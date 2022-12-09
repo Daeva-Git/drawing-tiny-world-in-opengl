@@ -26,8 +26,8 @@ public class Scene {
         terrain = new Terrain();
 
         gameObjects.add(camera);
-        gameObjects.add(terrain);
         gameObjects.add(water);
+        gameObjects.add(terrain);
     }
 
     public void update (float deltaTime) {
