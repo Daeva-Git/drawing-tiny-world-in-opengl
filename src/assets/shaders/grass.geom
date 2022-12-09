@@ -28,25 +28,24 @@ void generateGrassObj(vec4 position){
 
     mat4 MVP = projection * view * model;
 
-
-    gl_Position = MVP * (position + vec4(size, size, 0.0, 0.0));
+    gl_Position = MVP * (position + vec4(-size / 2.0, size, 0.0, 0.0));
     gl_Position = vec4(gl_Position.xyz / gl_Position.w, 1.0);
     gs_out.texCoord = vec2(0, 0);
     EmitVertex();
 
-    gl_Position = MVP * (position + vec4(size, 0.0, 0.0, 0.0));
+    gl_Position = MVP * (position + vec4(-size / 2.0, 0.0, 0.0, 0.0));
     gl_Position = vec4(gl_Position.xyz / gl_Position.w, 1.0);
     gs_out.texCoord = vec2(0, 1);
 
     EmitVertex();
 
-    gl_Position = MVP * (position + vec4(0.0, size, 0.0, 0.0));
+    gl_Position = MVP * (position + vec4(size / 2.0, size, 0.0, 0.0));
     gl_Position = vec4(gl_Position.xyz / gl_Position.w, 1.0);
     gs_out.texCoord = vec2(1, 0);
     EmitVertex();
 
 
-    gl_Position = MVP * (position);
+    gl_Position = MVP * (position + vec4(size / 2.0, 0.0, 0.0, 0.0));
     gl_Position = vec4(gl_Position.xyz / gl_Position.w, 1.0);
     gs_out.texCoord = vec2(1, 1);
     EmitVertex();
