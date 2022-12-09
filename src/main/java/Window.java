@@ -85,6 +85,9 @@ public class Window {
         glEnable(GL_DEPTH_TEST);
         glDepthFunc(GL_LESS);
 
+        glCullFace(GL_BACK);
+        glFrontFace(GL_CW);
+
         // get the thread stack and push a new frame
         try (MemoryStack stack = stackPush()) {
             IntBuffer pWidth = stack.mallocInt(1);

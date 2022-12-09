@@ -5,6 +5,7 @@ import static org.lwjgl.opengl.GL32.*;
 public class Demo {
     private Scene scene;
     private Window window;
+    private FrameBuffer frameBuffer;
 
     public static Demo instance;
     public static void main(String[] args) {
@@ -21,6 +22,7 @@ public class Demo {
     private void init(int width, int height) {
         window = new Window(width, height);
         scene = new Scene();
+        frameBuffer = new FrameBuffer(width * 2, height * 2);
     }
 
     private void start() {
@@ -56,12 +58,15 @@ public class Demo {
     }
 
     private void render () {
+        clear();
+        scene.render();
+    }
+
+    public void clear () {
         // set the clear color
         glClearColor(28 / 255f, 30 / 255f, 38 / 255f, 1f);
         // clear the framebuffer
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        scene.render();
     }
 
     private void dispose() {
@@ -82,5 +87,9 @@ public class Demo {
 
     public Scene getScene () {
         return scene;
+    }
+
+    public FrameBuffer getFrameBuffer() {
+        return frameBuffer;
     }
 }

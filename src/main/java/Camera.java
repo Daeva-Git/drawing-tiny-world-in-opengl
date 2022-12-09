@@ -130,4 +130,12 @@ public class Camera implements GameObject {
     public void setPosition (Vector3f position) {
         this.position = position;
     }
+
+    public void reflect () {
+        this.pitch = -this.pitch;
+        front.y = (float) Math.sin(Math.toRadians(pitch));
+        position.y = -position.y;
+        front.normalize();
+        view = new Matrix4f().lookAt(position, new Vector3f(position).add(front), up);
+    }
 }

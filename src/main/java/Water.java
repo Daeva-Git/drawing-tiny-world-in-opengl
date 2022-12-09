@@ -20,7 +20,7 @@ public class Water implements GameObject {
 
     public Water() {
         shader = new Shader("src/assets/shaders", "water");
-        texture = new Texture("src/assets/images/WaterDiffuse.png", GL_TEXTURE0);
+        texture = new Texture("src/assets/images/WaterDiffuse.png", GL_TEXTURE3);
         surface = new Surface(100, 100, 1);
         model = new Matrix4f().identity();
 
@@ -45,7 +45,8 @@ public class Water implements GameObject {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, surface.getIndices(), GL_STATIC_DRAW);
 
         shader.bind();
-        shader.setTexture("Texture", 0);
+        shader.setTexture("Texture", 3);
+        shader.setTexture("ReflectedTexture", 0);
     }
 
     private float timePassed = 0;
@@ -62,12 +63,13 @@ public class Water implements GameObject {
         glBindVertexArray(VAO);
 
         shader.setMatrix("model", model);
-        shader.setMatrix("view", Demo.instance.getScene().getCamera().getView());
-        shader.setMatrix("projection", Demo.instance.getScene().getCamera().getProjection());
+        final Camera camera = Demo.instance.getScene().getCamera();
+        shader.setMatrix("view", camera.getView());
+        shader.setMatrix("projection", camera.getProjection());
         shader.setFloat("timePassed", timePassed / 100);
         shader.setVec3("lightColor", Demo.instance.getScene().getDirectionalLight().getColor());
         shader.setVec3("lightDir", Demo.instance.getScene().getDirectionalLight().getDirection());
-        shader.setVec3("viewDir", Demo.instance.getScene().getCamera().getFront());
+        shader.setVec3("viewDir", camera.getFront());
 
         glDrawElements(GL_TRIANGLE_STRIP, surface.getIndices().length, GL_UNSIGNED_INT, 0);
     }
@@ -82,6 +84,6 @@ public class Water implements GameObject {
     }
 
     public void translate(float tx, float ty, float tz) {
-        model.translate(new Vector3f(tx, ty, tz));
+        model.translate(tx, ty, tz);
     }
 }

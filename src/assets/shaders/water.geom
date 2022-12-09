@@ -8,13 +8,14 @@ uniform mat4 projection;
 
 in VS_OUT {
     vec2 texCoord;
-    vec3 fragPos;
+    vec3 vertPos;
 } gs_in[];
 
 out GS_OUT {
     vec2 texCoord;
-    vec3 fragPos;
+    vec3 vertPos;
     vec3 norm;
+    vec4 clipSpace;
 } gs_out;
 
 vec3 getNormal(vec4 pos0, vec4 pos1, vec4 pos2){
@@ -36,17 +37,20 @@ void main() {
     pos2 = VP * pos2;
 
     gl_Position = pos0;
-    gs_out.fragPos = gs_in[0].fragPos;
+    gs_out.clipSpace = gl_Position;
+    gs_out.vertPos = gs_in[0].vertPos;
     gs_out.texCoord = gs_in[0].texCoord;
     EmitVertex();
 
     gl_Position = pos1;
-    gs_out.fragPos = gs_in[1].fragPos;
+    gs_out.clipSpace = gl_Position;
+    gs_out.vertPos = gs_in[1].vertPos;
     gs_out.texCoord = gs_in[1].texCoord;
     EmitVertex();
 
     gl_Position = pos2;
-    gs_out.fragPos = gs_in[2].fragPos;
+    gs_out.clipSpace = gl_Position;
+    gs_out.vertPos = gs_in[2].vertPos;
     gs_out.texCoord = gs_in[2].texCoord;
     EmitVertex();
 

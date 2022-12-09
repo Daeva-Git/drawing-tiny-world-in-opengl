@@ -6,15 +6,28 @@ import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 import static org.lwjgl.opengl.GL32.*;
-import static org.lwjgl.stb.STBImage.stbi_image_free;
-import static org.lwjgl.stb.STBImage.stbi_load;
+import static org.lwjgl.stb.STBImage.*;
 
 public class Texture {
-    private String path;
     private final int id;
-    private final int slot;
+    private int slot;
+
+    public Texture (int width, int height, int slot) {
+        // generate texture on GPU
+        id = glGenTextures();
+        this.slot = slot;
+
+        glActiveTexture(slot);
+        glBindTexture(GL_TEXTURE_2D, id);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, 0);
+    }
 
     public Texture(String path, int slot) {
+        // generate texture on GPU
         this.id = glGenTextures();
         this.slot = slot;
 
@@ -35,5 +48,13 @@ public class Texture {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width.get(0), height.get(0), 0, GL_RGB, GL_UNSIGNED_BYTE, image);
         glGenerateMipmap(GL_TEXTURE_2D);
         stbi_image_free(image);
+    }
+
+    public int getID() {
+        return id;
+    }
+
+    public int getSlot() {
+        return slot;
     }
 }

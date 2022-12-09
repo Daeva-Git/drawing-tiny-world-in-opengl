@@ -23,7 +23,7 @@ public class Terrain implements GameObject {
         shader = new Shader("src/assets/shaders", "terrain");
         texture = new Texture("src/assets/images/TerrainDiffuse.png", GL_TEXTURE1);
         heightMapTexture = new Texture("src/assets/images/TerrainHeightMap.png", GL_TEXTURE2);
-        surface = new Surface(100, 100, 1);
+        surface = new Surface(50, 50, 1);
         model = new Matrix4f().identity();
 
         VAO = glGenVertexArrays();
@@ -82,6 +82,6 @@ public class Terrain implements GameObject {
     }
 
     public void translate (float tx, float ty, float tz) {
-        model.translate(new Vector3f(tx, ty, tz));
+        model.translate(tx, ty, tz);
     }
 }

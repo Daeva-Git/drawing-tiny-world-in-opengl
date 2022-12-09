@@ -1,45 +1,43 @@
-import java.nio.ByteBuffer;
+import renderer.Texture;
 
 import static org.lwjgl.opengl.GL33.*;
 
 public class FrameBuffer{
-    private final int texture;
-    private final int frameBuffer;
+    private int id;
+    private Texture texture;
 
-    private final int width, height;
+    public FrameBuffer (int width, int height) {
+        // generate framebuffer
+        id = glGenFramebuffers();
+        glBindFramebuffer(GL_FRAMEBUFFER, id);
 
-    FrameBuffer(int width, int height){
-        this.width = width;
-        this.height = height;
+        // create the texture to render the data to, and attach it to our framebuffer
+        this.texture = new Texture(width, height, GL_TEXTURE0);
 
-        frameBuffer = glGenFramebuffers();
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, this.texture.getID(), 0);
 
-        glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-        glDrawBuffer(GL_COLOR_ATTACHMENT0);
+        // create renderbuffer store the depth info
+        int rboID = glGenRenderbuffers();
+        glBindRenderbuffer(GL_RENDERBUFFER, rboID);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT32, width, height);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rboID);
 
-        texture = glGenTextures();
-
-        glBindTexture(GL_TEXTURE_2D, texture);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (ByteBuffer) null);
-        glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, texture, 0);
-    }
-
-    public void bind(){
-        glBindFramebuffer(GL_FRAMEBUFFER, frameBuffer);
-        glViewport(0, 0, width, height);
-
-        glClearColor(0f, 0f, 0f, 0f);
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    }
-
-    public void unbind(){
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            assert false : "Error: Framebuffer is not complete";
+        }
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
-    public void bindTexture(int slot){
-        glActiveTexture(GL_TEXTURE0 + slot);
-        glBindTexture(GL_TEXTURE_2D, texture);
+    public void bind() {
+        glBindFramebuffer(GL_FRAMEBUFFER, id);
+    }
+
+    public void unbind() {
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+
+    public void bindTexture () {
+        glActiveTexture(texture.getSlot());
+        glBindTexture(GL_TEXTURE_2D, texture.getID());
     }
 }

@@ -2,10 +2,15 @@ import org.joml.Vector3f;
 
 import java.util.ArrayList;
 
+import static org.lwjgl.opengl.GL11.*;
+
 public class Scene {
     private final Camera camera;
     private final Light directionalLight;
     private final ArrayList<GameObject> gameObjects;
+
+    private final Water water;
+    private final Terrain terrain;
 
     public Scene () {
         gameObjects = new ArrayList<>();
@@ -17,8 +22,8 @@ public class Scene {
 
         directionalLight = new Light();
 
-        final Water water = new Water();
-        final Terrain terrain = new Terrain();
+        water = new Water();
+        terrain = new Terrain();
 
         gameObjects.add(camera);
         gameObjects.add(terrain);
@@ -32,6 +37,20 @@ public class Scene {
     }
 
     public void render () {
+        camera.reflect();
+
+        Demo.instance.getFrameBuffer().bind();
+        Demo.instance.clear();
+
+        glEnable(GL_CULL_FACE);
+        terrain.render();
+        glDisable(GL_CULL_FACE);
+
+        Demo.instance.getFrameBuffer().unbind();
+        Demo.instance.getFrameBuffer().bindTexture();
+
+        camera.reflect();
+
         for (GameObject gameObject : gameObjects) {
             gameObject.render();
         }

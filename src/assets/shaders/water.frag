@@ -1,5 +1,6 @@
 #version 330 core
 uniform sampler2D Texture;
+uniform sampler2D RelfectedTexture;
 uniform float timePassed;
 uniform vec3 lightColor;
 uniform vec3 lightDir;
@@ -8,21 +9,22 @@ uniform mat4 view;
 
 in GS_OUT {
     vec2 texCoord;
-    vec3 fragPos;
+    vec3 vertPos;
     vec3 norm;
+    vec4 clipSpace;
 } fs_in;
 
 out vec4 FragColor;
 
 void main() {
     // Ka ambient reflection coefficient
-    float Ka = 0.3;
+    float Ka = 0.7;
     // Kd diffuse-reflection coefficient
     float Kd = 0.6;
     // Ks specular reflection coefficient
-    float Ks = 0.7;
+    float Ks = 0.8;
     // k shininess factor
-    float k = 7;
+    float k = 35;
 
     vec3 reflectDir = reflect(lightDir, fs_in.norm);
 
@@ -40,6 +42,11 @@ void main() {
     vec2 uv = fs_in.texCoord;
     uv.x = uv.x + timePassed;
 
+    vec2 ss = (fs_in.clipSpace.xy / fs_in.clipSpace.w) * 0.5 + 0.5;
+    vec2 reflection = vec2(ss.x, -ss.y);
+    vec4 reflectionVertexColor = texture(RelfectedTexture, reflection);
+
     vec4 vertexColor = texture(Texture, uv);
-    FragColor = vec4((ambient + diffuse + specular) * vec3(vertexColor), 1.0);
+
+    FragColor = mix(vec4((ambient + diffuse + specular) * vec3(vertexColor), 1.0), reflectionVertexColor, 0.5);
 }
