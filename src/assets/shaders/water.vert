@@ -6,10 +6,12 @@ uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
 
-out vec2 TexCoord;
+out VS_OUT {
+    vec2 texCoord;
+    vec3 fragPos;
+} vs_out;
 
-void main()
-{
+void main() {
     gl_Position = projection * view * model * vec4(aPos, 1.0);
-    TexCoord = aTexCoord;
+    vs_out.texCoord = aTexCoord;
 }

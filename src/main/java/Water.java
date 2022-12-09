@@ -65,6 +65,8 @@ public class Water implements GameObject {
         shader.setMatrix("view", Demo.instance.getScene().getCamera().getView());
         shader.setMatrix("projection", Demo.instance.getScene().getCamera().getProjection());
         shader.setFloat("timePassed", timePassed / 100);
+        shader.setVec3("lightColor", Demo.instance.getScene().getLight().getColor());
+        shader.setVec3("viewDir", Demo.instance.getScene().getCamera().getFront());
 
         glDrawElements(GL_TRIANGLE_STRIP, surface.getIndices().length, GL_UNSIGNED_INT, 0);
     }

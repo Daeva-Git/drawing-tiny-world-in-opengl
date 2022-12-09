@@ -111,6 +111,14 @@ public class Camera implements GameObject {
         return this.view;
     }
 
+    public Vector3f getFront() {
+        return front;
+    }
+
+    public Vector3f getPosition() {
+        return position;
+    }
+
     public void setPitch (float pitch) {
         this.pitch = pitch;
     }

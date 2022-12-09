@@ -1,7 +1,9 @@
 package renderer;
 
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL20;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -99,6 +101,14 @@ public class Shader {
 
     public void setMatrix(String name, Matrix4f value) {
         glUniformMatrix4fv(glGetUniformLocation(ID, name), false, value.get(fb));
+    }
+
+    public void setVec3(String name, Vector3f value) {
+        GL20.glUniform3f(GL20.glGetUniformLocation(ID, name), value.x, value.y, value.z);
+    }
+
+    public void setVec3(String name, float x, float y, float z) {
+        GL20.glUniform3f(GL20.glGetUniformLocation(ID, name), x, y, z);
     }
 
     public void setTexture(String name, int slot) {

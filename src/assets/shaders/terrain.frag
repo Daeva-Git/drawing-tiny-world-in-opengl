@@ -1,22 +1,24 @@
 #version 330 core
+uniform sampler2D Texture;
+uniform vec3 lightColor;
+uniform vec3 lightDir;
+uniform mat4 view;
+
+in GS_OUT {
+    vec2 texCoord;
+    vec3 fragPos;
+    vec3 norm;
+} fs_in;
+
 out vec4 FragColor;
 
-in vec2 TexCoords;
-in vec3 LightDir;
-in vec3 Norm;
-
-uniform sampler2D Texture;
-
-void main()
-{
-    vec3 lightColor = vec3(1, 1, 1);
-
+void main() {
     // Kd diffuse-reflection coefficient
     float Kd = 0.6;
 
     // diffuse
-    vec3 diffuse = Kd * max(dot(Norm, LightDir), 0.0) * lightColor;
+    vec3 diffuse = Kd * max(dot(fs_in.norm, normalize(mat3(view) * lightDir)), 0.0) * lightColor;
 
-    vec4 vertexColor = texture(Texture, TexCoords);
+    vec4 vertexColor = texture(Texture, fs_in.texCoord);
     FragColor = vec4((diffuse + lightColor) * vec3(vertexColor), 1);
 }

@@ -56,6 +56,9 @@ public class Terrain implements GameObject {
 
     }
 
+    private Vector3f lightDir = new Vector3f(1, 1, 1);
+    private Vector3f lightColor = new Vector3f(1, 1, 1);
+
     @Override
     public void render () {
         shader.bind();
@@ -65,6 +68,9 @@ public class Terrain implements GameObject {
         shader.setMatrix("model", model);
         shader.setMatrix("view", Demo.instance.getScene().getCamera().getView());
         shader.setMatrix("projection", Demo.instance.getScene().getCamera().getProjection());
+        shader.setVec3("lightDir", Demo.instance.getScene().getLight().getDirection());
+        shader.setVec3("lightColor", Demo.instance.getScene().getLight().getColor());
+        shader.setVec3("viewPos",  Demo.instance.getScene().getCamera().getFront());
 
         glDrawElements(GL_TRIANGLE_STRIP, surface.getIndices().length, GL_UNSIGNED_INT, 0);
     }
