@@ -8,12 +8,10 @@ uniform mat4 projection;
 
 in VS_OUT {
     vec2 texCoord;
-    vec3 fragPos;
 } gs_in[];
 
 out GS_OUT {
     vec2 texCoord;
-    vec3 fragPos;
     vec3 norm;
 } gs_out;
 

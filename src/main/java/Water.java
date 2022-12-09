@@ -21,7 +21,7 @@ public class Water implements GameObject {
     public Water() {
         shader = new Shader("src/assets/shaders", "water");
         texture = new Texture("src/assets/images/WaterDiffuse.png", GL_TEXTURE0);
-        surface = new Surface(20, 20, 1);
+        surface = new Surface(100, 100, 1);
         model = new Matrix4f().identity();
 
         VAO = glGenVertexArrays();
@@ -65,7 +65,8 @@ public class Water implements GameObject {
         shader.setMatrix("view", Demo.instance.getScene().getCamera().getView());
         shader.setMatrix("projection", Demo.instance.getScene().getCamera().getProjection());
         shader.setFloat("timePassed", timePassed / 100);
-        shader.setVec3("lightColor", Demo.instance.getScene().getLight().getColor());
+        shader.setVec3("lightColor", Demo.instance.getScene().getDirectionalLight().getColor());
+        shader.setVec3("lightDir", Demo.instance.getScene().getDirectionalLight().getDirection());
         shader.setVec3("viewDir", Demo.instance.getScene().getCamera().getFront());
 
         glDrawElements(GL_TRIANGLE_STRIP, surface.getIndices().length, GL_UNSIGNED_INT, 0);

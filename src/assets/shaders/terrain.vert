@@ -6,7 +6,6 @@ uniform sampler2D heightmap;
 
 out VS_OUT {
     vec2 texCoord;
-    vec3 fragPos;
 } vs_out;
 
 void main() {

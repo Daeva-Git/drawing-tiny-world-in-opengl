@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Scene {
     private final Camera camera;
-    private final Light light;
+    private final Light directionalLight;
     private final ArrayList<GameObject> gameObjects;
 
     public Scene () {
@@ -15,7 +15,7 @@ public class Scene {
         camera.setFront(new Vector3f(-1.160E-2f, -5.478E-1f, -8.365E-1f));
         camera.setPitch(-27);
 
-        light = new Light();
+        directionalLight = new Light();
 
         final Water water = new Water();
         final Terrain terrain = new Terrain();
@@ -47,7 +47,7 @@ public class Scene {
         return camera;
     }
 
-    public Light getLight() {
-        return light;
+    public Light getDirectionalLight() {
+        return directionalLight;
     }
 }
