@@ -48,10 +48,10 @@ public class Shader {
     }
 
     // constructor reads and builds the shader
-    public Shader(String path, String name) {
-        final String vertexPath = path + "/" + name + ".vert";
-        final String fragmentPath = path + "/" + name + ".frag";
-        final String geometryPath = path + "/" + name + ".geom";
+    public Shader (String path, String vert, String geom, String frag) {
+        final String vertexPath = path + "/" + vert + ".vert";
+        final String fragmentPath = path + "/" + geom + ".frag";
+        final String geometryPath = path + "/" + frag + ".geom";
 
         final String vertexSource = ParseShader(vertexPath);
         final String fragmentSource = ParseShader(fragmentPath);
@@ -78,6 +78,9 @@ public class Shader {
         glDeleteShader(vertexID);
         glDeleteShader(fragmentID);
         glDeleteShader(geometryID);
+    }
+    public Shader(String path, String name) {
+        this(path, name, name, name);
     }
 
     // use/activate the shader

@@ -26,15 +26,14 @@ public class Terrain implements GameObject {
 
     public Terrain () {
         shader = new Shader("src/assets/shaders", "terrain");
-        grassShader = new Shader("src/assets/shaders", "grass");
-
         texture = new Texture("src/assets/images/TerrainDiffuse.png", GL_TEXTURE1);
         heightMapTexture = new Texture("src/assets/images/TerrainHeightMap.png", GL_TEXTURE2);
 
+        grassShader = new Shader("src/assets/shaders", "terrain", "grass", "grass");
         grassTexture = new Texture("src/assets/images/GrassDiffuse.png", GL_TEXTURE4, true);
         grassDistributionTexture = new Texture("src/assets/images/GrassDistribution.png", GL_TEXTURE5);
 
-        surface = new Surface(50, 50, 1);
+        surface = new Surface(200, 200, 1);
         model = new Matrix4f().identity();
 
         VAO = glGenVertexArrays();
@@ -91,8 +90,8 @@ public class Terrain implements GameObject {
     }
 
     public void renderGrass () {
+        glDisable(GL_CULL_FACE);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
         grassShader.bind();
         grassShader.setMatrix("model", model);
         grassShader.setMatrix("view", Demo.instance.getScene().getCamera().getView());
@@ -100,8 +99,9 @@ public class Terrain implements GameObject {
         grassShader.setVec3("lightDir", Demo.instance.getScene().getDirectionalLight().getDirection());
         grassShader.setVec3("lightColor", Demo.instance.getScene().getDirectionalLight().getColor());
         grassShader.setVec3("viewPos",  Demo.instance.getScene().getCamera().getFront());
-        grassShader.setFloat("size",  0.1f);
+        grassShader.setFloat("size",  0.05f);
         glDrawElements(GL_TRIANGLE_STRIP, surface.getIndices().length, GL_UNSIGNED_INT, 0);
+        glEnable(GL_CULL_FACE);
     }
 
     @Override

@@ -5,7 +5,7 @@ public class Light {
     private Vector3f direction;
 
     public Light () {
-        color = new Vector3f(1, 1, 1);
+        color = new Vector3f(0.7f, 0.7f, 0.7f);
         direction = new Vector3f(4, 4, 4).normalize();
     }
 
