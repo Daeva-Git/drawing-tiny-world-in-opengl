@@ -22,8 +22,7 @@ public class Demo {
     private void init(int width, int height) {
         window = new Window(width, height);
         scene = new Scene();
-//        frameBuffer = new FrameBuffer(width * 2, height * 2);
-        frameBuffer = new FrameBuffer(width, height);
+        frameBuffer = new FrameBuffer(width * 2, height * 2);
     }
 
     private void start() {
