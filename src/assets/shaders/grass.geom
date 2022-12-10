@@ -1,6 +1,6 @@
 #version 330 core
 layout (triangles) in;
-layout (triangle_strip, max_vertices = 4) out;
+layout (triangle_strip, max_vertices = 8) out;
 
 uniform mat4 model;
 uniform mat4 view;
@@ -43,12 +43,29 @@ void generateGrassObj(vec4 position, float size){
     gl_Position = MVP * (position + vec4(size / 2, size, 0.0, 0.0));
     gs_out.texCoord = vec2(0, 0);
     EmitVertex();
+
+    gl_Position = MVP * (position + vec4(0.0, 0.0, -size / 2, 0.0));
+    gs_out.texCoord = vec2(1, 1);
+    EmitVertex();
+
+    gl_Position = MVP * (position + vec4(0.0, size, -size / 2, 0.0));
+    gs_out.texCoord = vec2(1, 0);
+    EmitVertex();
+
+    gl_Position = MVP * (position + vec4(0.0, 0.0, size / 2, 0.0));
+    gs_out.texCoord = vec2(0, 1);
+    EmitVertex();
+
+    gl_Position = MVP * (position + vec4(0.0, size, size / 2, 0.0));
+    gs_out.texCoord = vec2(0, 0);
+    EmitVertex();
 }
 
 void main() {
     // heihgtmap
     vec2 centerTexCoord = (gs_in[0].texCoord + gs_in[1].texCoord + gs_in[2].texCoord) / 3;
 
+    // generating grass
     float whiteness = texture(distribution, centerTexCoord).x;
     if (whiteness >= 0.1) {
         vec4 sum = gl_in[0].gl_Position + gl_in[1].gl_Position + gl_in[2].gl_Position;

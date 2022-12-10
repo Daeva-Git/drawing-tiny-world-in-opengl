@@ -20,7 +20,7 @@ public class Water implements GameObject {
     public Water() {
         shader = new Shader("src/assets/shaders", "water");
         texture = new Texture("src/assets/images/WaterDiffuse.png", GL_TEXTURE3);
-        surface = new Surface(100, 100, 1);
+        surface = new Surface(200, 200, 1);
         model = new Matrix4f().identity();
 
         VAO = glGenVertexArrays();

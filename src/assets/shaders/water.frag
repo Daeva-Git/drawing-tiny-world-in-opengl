@@ -18,11 +18,11 @@ out vec4 FragColor;
 
 void main() {
     // Ka ambient reflection coefficient
-    float Ka = 0.7;
+    float Ka = 0.9;
     // Kd diffuse-reflection coefficient
     float Kd = 0.6;
     // Ks specular reflection coefficient
-    float Ks = 0.8;
+    float Ks = 1;
     // k shininess factor
     float k = 35;
 
