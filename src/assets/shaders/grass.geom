@@ -49,10 +49,11 @@ void main() {
     // heihgtmap
     vec2 centerTexCoord = (gs_in[0].texCoord + gs_in[1].texCoord + gs_in[2].texCoord) / 3;
 
-    if (texture(distribution, centerTexCoord).x >= 0.1) {
+    float whiteness = texture(distribution, centerTexCoord).x;
+    if (whiteness >= 0.1) {
         vec4 sum = gl_in[0].gl_Position + gl_in[1].gl_Position + gl_in[2].gl_Position;
         vec4 centerPos = sum / 3;
-        generateGrassObj(centerPos, size);
+        generateGrassObj(centerPos, size * (0.5 + whiteness));
     }
 
     EndPrimitive();
