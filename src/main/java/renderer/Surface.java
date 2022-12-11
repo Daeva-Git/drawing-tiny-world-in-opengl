@@ -14,7 +14,7 @@ public class Surface {
 
     private float[] generateVertices(int verticalVerticesCount, int horizontalVerticesCount) {
         final int floatsPerVertex = Utils.POSITION_DATA_SIZE_IN_ELEMENTS + Utils.TEXTURE_DATA_SIZE_IN_ELEMENTS;
-        final float[] heightMapVertexData = new float[verticalVerticesCount * horizontalVerticesCount * floatsPerVertex];
+        final float[] vertices = new float[verticalVerticesCount * horizontalVerticesCount * floatsPerVertex];
         int offset = 0;
 
         for (int y = 0; y < horizontalVerticesCount; y++) {
@@ -26,16 +26,16 @@ public class Surface {
                 final float zPosition = zRatio * size - size * 0.5f;
 
                 // position
-                heightMapVertexData[offset++] = xPosition;
-                heightMapVertexData[offset++] = 0;
-                heightMapVertexData[offset++] = zPosition;
+                vertices[offset++] = xPosition;
+                vertices[offset++] = 0;
+                vertices[offset++] = zPosition;
 
                 // texture
-                heightMapVertexData[offset++] = xRatio;
-                heightMapVertexData[offset++] = zRatio;
+                vertices[offset++] = xRatio;
+                vertices[offset++] = zRatio;
             }
         }
-        return heightMapVertexData;
+        return vertices;
     }
 
     private int[] generateIndices(int verticalVerticesCount, int horizontalVerticesCount) {
@@ -43,27 +43,27 @@ public class Surface {
         final int numDegensRequired = 2 * (numStripsRequired - 1);
         final int verticesPerStrip = 2 * verticalVerticesCount;
 
-        final int[] heightMapIndexData = new int[(verticesPerStrip * numStripsRequired) + numDegensRequired];
+        final int[] indices = new int[(verticesPerStrip * numStripsRequired) + numDegensRequired];
         int offset = 0;
 
         for (int y = 0; y < horizontalVerticesCount - 1; y++) {
             if (y > 0) {
                 // degenerate begin: repeat first vertex
-                heightMapIndexData[offset++] = y * verticalVerticesCount;
+                indices[offset++] = y * verticalVerticesCount;
             }
 
             for (int x = 0; x < verticalVerticesCount; x++) {
                 // one part of the strip
-                heightMapIndexData[offset++] = y * verticalVerticesCount + x;
-                heightMapIndexData[offset++] = (y + 1) * verticalVerticesCount + x;
+                indices[offset++] = y * verticalVerticesCount + x;
+                indices[offset++] = (y + 1) * verticalVerticesCount + x;
             }
 
             if (y < horizontalVerticesCount - 2) {
                 // degenerate end: repeat last vertex
-                heightMapIndexData[offset++] = (y + 1) * verticalVerticesCount + verticalVerticesCount - 1;
+                indices[offset++] = (y + 1) * verticalVerticesCount + verticalVerticesCount - 1;
             }
         }
-        return heightMapIndexData;
+        return indices;
     }
 
     public int[] getIndices() {
